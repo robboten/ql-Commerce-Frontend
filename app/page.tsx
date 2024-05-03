@@ -3,6 +3,13 @@ import TestComponent from "./test";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TopNav } from "./_components/top-nav";
 
+// export const metadata = {
+//   description: 'High-performance ecommerce store built with Next.js, Vercel, and Shopify.',
+//   openGraph: {
+//     type: 'website'
+//   }
+// };
+
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between px-24 space-y-8">

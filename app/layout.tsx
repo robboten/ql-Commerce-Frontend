@@ -36,7 +36,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${afacad.className} ${afacad.variable}  ${sono.variable}`}
+        className={`
+        ${afacad.className}
+         `}
+
+        //        ${afacad.variable}
+        //${sono.variable}
       >
         <header className="px-24 flex items-center justify-start h-16">
           <NavigationMenuDemo />

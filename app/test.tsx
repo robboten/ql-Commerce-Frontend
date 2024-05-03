@@ -1,77 +1,39 @@
+import { getPages } from "@/lib/api";
 import Image from "next/image";
 
-interface Movie {
-  title: string;
-  director: string;
-  releaseDate: string;
-  speciesConnection: {
-    species: Species[];
-  };
-}
-
-interface Species {
-  name: string;
-  classification: string;
-}
-
 export default async function TestComponent() {
-  const pa = process.env.GRAPHQL_API_URL;
-  console.log(pa);
-  if (!pa) return null;
-  const { data } = await fetch(pa, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      query: `
-        query Query {
-            allFilms(first:12) {
-              films {
-                title
-                director
-                releaseDate
-                speciesConnection {
-                  species {
-                    name
-                    classification
-                    homeworld {
-                      name
-                    }
-                  }
-                }
-              }
-            }
-          }
-    `,
-    }),
-    next: { revalidate: 1000 },
-  }).then((res) => res.json());
-  console.log("raw", data);
-  const blogPosts: Movie[] = data.allFilms.films;
-  console.log(blogPosts);
+  const items = await getPages();
+
   return (
-    <div className="grid grid-cols-4 gap-x-4 gap-y-8 w-full">
-      {blogPosts.map((f, i) => {
+    <div className="grid  grid-cols-auto-fit-100 auto-rows-auto grid-flow-dense gap-x-4 gap-y-8 w-full">
+      {items.map((f, i) => {
+        const body = f.body.split("\n");
+        console.log(body.length);
         return (
           <div
             key={i}
-            className="flex flex-col h-full justify-between items-start"
+            className="grid grid-rows-subgrid row-span-4 h-full gap-2"
           >
-            <Image
-              src={`https://picsum.photos/seed/xyz${i}/300`}
-              alt="alt"
-              width={300}
-              height={300}
-              className="w-full aspect-square object-cover mb-4"
-            />
+            <div className="relative w-full h-full aspect-square object-contain">
+              <Image
+                src={`https://picsum.photos/seed/xyz${i}/800`}
+                alt="alt"
+                fill
+                // width={300}
+                // height={300}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            </div>
             <h2 className="text-xl mb-1">{f.title}</h2>
-            <span className="text-xl font-bold mb-3">{f.releaseDate}</span>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi
-              quibusdam quas, veritatis consectetur dignissimos non aspernatur
-              fugit. Nostrum soluta rerum alias.
-            </p>
+            <time className="text-xl font-bold mb-3" dateTime={f.createdAt}>
+              {new Intl.DateTimeFormat().format(new Date(f.createdAt))}
+            </time>
+            <p>{f.bodySummary}</p>
+            {/* <div className="prose">
+              {body.map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
+            </div> */}
           </div>
         );
       })}
