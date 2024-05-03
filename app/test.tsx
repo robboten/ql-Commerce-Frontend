@@ -1,13 +1,14 @@
-import { getPages } from "@/lib/api";
+import { getPages, getProducts } from "@/lib/api";
 import Image from "next/image";
 
 export default async function TestComponent() {
   const items = await getPages();
-
+  const products = await getProducts({ query: "" });
+  console.log(products);
   return (
     <div className="grid  grid-cols-auto-fit-100 auto-rows-auto grid-flow-dense gap-x-4 gap-y-8 w-full">
-      {items.map((f, i) => {
-        const body = f.body.split("\n");
+      {products.map((f, i) => {
+        const body = f.description.split("\n");
         console.log(body.length);
         return (
           <div
@@ -25,15 +26,18 @@ export default async function TestComponent() {
               />
             </div>
             <h2 className="text-xl mb-1">{f.title}</h2>
-            <time className="text-xl font-bold mb-3" dateTime={f.createdAt}>
+            <span className="text-xl font-bold mb-3">
+              {f.priceRange.minVariantPrice}
+            </span>
+            {/* <time className="text-xl font-bold mb-3" dateTime={f.createdAt}>
               {new Intl.DateTimeFormat().format(new Date(f.createdAt))}
-            </time>
-            <p>{f.bodySummary}</p>
-            {/* <div className="prose">
+            </time> */}
+            {/* <p>{f.description}</p> */}
+            <div className="prose">
               {body.map((p, i) => (
                 <p key={i}>{p}</p>
               ))}
-            </div> */}
+            </div>
           </div>
         );
       })}
