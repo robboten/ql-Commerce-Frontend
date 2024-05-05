@@ -1,13 +1,22 @@
+import { TAGS } from "../constants";
+import {
+  getCollectionProductsQuery,
+  getCollectionsQuery,
+} from "./queries/collection";
 import { getPagesQuery } from "./queries/page";
 import { getProductsQuery } from "./queries/product";
 import {
-  ApiPagesOperation,
+  PagesOperation,
   ApiProduct,
   Connection,
   Page,
   Product,
   Image,
   ProductsOperation,
+  Collection,
+  CollectionsOperation,
+  ApiCollection,
+  ProductsCollectionOperation,
 } from "./types";
 
 const domain = process.env.GRAPHQL_API_DOMAIN;
@@ -33,7 +42,7 @@ export async function apiFetch<T>({
   tags?: string[];
   variables?: ExtractVariables<T>;
 }): Promise<{ status: number; body: T } | never> {
-  console.log("fetch", endpoint, query);
+  //console.log("fetch", endpoint, query);
   try {
     const result = await fetch(endpoint, {
       method: "POST",
@@ -43,10 +52,10 @@ export async function apiFetch<T>({
         ...(variables && { variables }),
       }),
       cache,
+      ...(tags && { next: { tags } }),
     });
     const body = await result.json();
 
-    console.log(body);
     return {
       status: result.status,
       body,
@@ -64,10 +73,9 @@ export const removeEdgesAndNodes = (array: Connection<any>) => {
 };
 
 export async function getPages(): Promise<Page[]> {
-  const res = await apiFetch<ApiPagesOperation>({
+  const res = await apiFetch<PagesOperation>({
     query: getPagesQuery,
   });
-  console.log(removeEdgesAndNodes(res.body.data.pages));
   return removeEdgesAndNodes(res.body.data.pages);
 }
 
@@ -87,16 +95,78 @@ export async function getProducts({
   ];
   const res = await apiFetch<ProductsOperation>({
     query: getProductsQuery,
-    //tags: [TAGS.products],
+    tags: [TAGS.products],
     variables: {
       query,
       order_by: queryOrder,
+      first: 20,
     },
   });
 
   return reshapeProducts(removeEdgesAndNodes(res.body.data.products));
 }
 
+export async function getCollectionProducts({
+  collection,
+  reverse,
+  sortKey,
+}: {
+  collection: string;
+  reverse?: boolean;
+  sortKey?: string;
+}): Promise<Product[]> {
+  const queryOrder = [
+    sortKey === "price"
+      ? { ["priceRange"]: { ["minVariantPrice"]: reverse ? "DESC" : "ASC" } }
+      : { [sortKey ? sortKey : "title"]: reverse ? "DESC" : "ASC" },
+  ];
+  const res = await apiFetch<ProductsCollectionOperation>({
+    query: getCollectionProductsQuery,
+    tags: [TAGS.collections, TAGS.products],
+    variables: {
+      handle: collection,
+      order_by: queryOrder,
+    },
+  });
+  if (!res.body.data.collection) {
+    console.log(`No collection found for \`${collection}\``);
+    return [];
+  }
+
+  return reshapeProducts(
+    removeEdgesAndNodes(res.body.data.collection.products)
+  );
+}
+
+export async function getCollections(): Promise<Collection[]> {
+  const res = await apiFetch<CollectionsOperation>({
+    query: getCollectionsQuery,
+    tags: [TAGS.collections],
+  });
+  const shopifyCollections = removeEdgesAndNodes(res.body?.data?.collections);
+  const collections = [
+    {
+      handle: "",
+      title: "All",
+      description: "All products",
+      seo: {
+        title: "All",
+        description: "All products",
+      },
+      path: "/search",
+      updatedAt: new Date().toISOString(),
+    },
+    // Filter out the `hidden` collections.
+    // Collections that start with `hidden-*` need to be hidden on the search page.
+    ...reshapeCollections(shopifyCollections).filter(
+      (collection) => !collection.handle.startsWith("hidden")
+    ),
+  ];
+
+  return collections;
+}
+
+//reshape
 const reshapeImages = (images: Connection<Image>, productTitle: string) => {
   const flattened = removeEdgesAndNodes(images);
 
@@ -143,4 +213,33 @@ const reshapeProducts = (products: ApiProduct[]) => {
   }
 
   return reshapedProducts;
+};
+
+const reshapeCollection = (
+  collection: ApiCollection
+): Collection | undefined => {
+  if (!collection) {
+    return undefined;
+  }
+
+  return {
+    ...collection,
+    path: `/search/${collection.handle}`,
+  };
+};
+
+const reshapeCollections = (collections: Collection[]) => {
+  const reshapedCollections = [];
+
+  for (const collection of collections) {
+    if (collection) {
+      const reshapedCollection = reshapeCollection(collection);
+
+      if (reshapedCollection) {
+        reshapedCollections.push(reshapedCollection);
+      }
+    }
+  }
+
+  return reshapedCollections;
 };

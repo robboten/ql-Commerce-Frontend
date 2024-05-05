@@ -8,12 +8,6 @@ export type Edge<T> = {
   node: T;
 };
 
-export type ApiPagesOperation = {
-  data: {
-    pages: Connection<Page>;
-  };
-};
-
 export type Page = {
   id: string;
   title: string;
@@ -25,9 +19,10 @@ export type Page = {
   updatedAt: string;
 };
 
-export type SEO = {
-  title: string;
-  description: string;
+export type PagesOperation = {
+  data: {
+    pages: Connection<Page>;
+  };
 };
 
 export type Image = {
@@ -35,6 +30,11 @@ export type Image = {
   altText: string;
   width: number;
   height: number;
+};
+
+export type SEO = {
+  title: string;
+  description: string;
 };
 
 export type Product = Omit<ApiProduct, "variants" | "images"> & {
@@ -84,7 +84,27 @@ export type Money = {
   currencyCode: string;
 };
 
-export type CollectionProductsOperation = {
+export type ProductOperation = {
+  data: { product: ApiProduct };
+  variables: {
+    handle: string;
+  };
+};
+
+export type ProductsOperation = {
+  data: {
+    products: Connection<ApiProduct>;
+  };
+  variables: {
+    first?: number;
+    query?: string;
+    order_by?: Array<
+      Record<string, string> | Record<string, Record<string, string>>
+    >;
+  };
+};
+
+export type ProductsCollectionOperation = {
   data: {
     collection: {
       products: Connection<ApiProduct>;
@@ -100,14 +120,30 @@ export type CollectionProductsOperation = {
   };
 };
 
-export type ProductsOperation = {
+//Needed?
+export type Collection = ApiCollection & {
+  path: string;
+};
+
+export type ApiCollection = {
+  handle: string;
+  title: string;
+  description: string;
+  seo: SEO;
+  updatedAt: string;
+};
+
+export type CollectionOperation = {
   data: {
-    products: Connection<ApiProduct>;
+    collection: Collection;
   };
   variables: {
-    query?: string;
-    order_by?: Array<
-      Record<string, string> | Record<string, Record<string, string>>
-    >;
+    handle: string;
+  };
+};
+
+export type CollectionsOperation = {
+  data: {
+    collections: Connection<Collection>;
   };
 };
