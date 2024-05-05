@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import { Inter, Afacad, Sono } from "next/font/google";
 import "./globals.css";
 import { NavigationMenuDemo, TopNav } from "./_components/top-nav";
+import { MobileNav } from "@/components/ui/mobile-nav";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Icons } from "@/components/ui/icons";
 
 //const inter = Inter({ subsets: ["latin"] });
 //const afacad = Afacad({ subsets: ["latin"] });
@@ -43,8 +48,43 @@ export default function RootLayout({
         //        ${afacad.variable}
         //${sono.variable}
       >
-        <header className="px-24 flex items-center justify-start h-16">
+        <header className="container flex items-center justify-start h-16">
           <NavigationMenuDemo />
+          <MobileNav />
+          <div className="flex flex-1 items-center justify-between space-x-2 sm:justify-end">
+            <div className="w-full flex-1 sm:w-auto sm:flex-none">
+              ql-Commerce
+            </div>
+            <nav className="flex items-center">
+              <Link href={"/"} target="_blank" rel="noreferrer">
+                <div
+                  className={cn(
+                    buttonVariants({
+                      variant: "ghost",
+                    }),
+                    "w-9 px-0"
+                  )}
+                >
+                  <Icons.gitHub className="h-4 w-4" />
+                  <span className="sr-only">GitHub</span>
+                </div>
+              </Link>
+              <Link href={"/"} target="_blank" rel="noreferrer">
+                <div
+                  className={cn(
+                    buttonVariants({
+                      variant: "ghost",
+                    }),
+                    "w-9 px-0"
+                  )}
+                >
+                  <Icons.twitter className="h-3 w-3 fill-current" />
+                  <span className="sr-only">Twitter</span>
+                </div>
+              </Link>
+              {/* <ModeToggle /> */}
+            </nav>
+          </div>
         </header>
         {children}
       </body>
