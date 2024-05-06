@@ -53,7 +53,7 @@ export default function RootLayout({
           <MobileNav />
           <div className="flex flex-1 items-center justify-between space-x-2 sm:justify-end">
             <div className="w-full flex-1 sm:w-auto sm:flex-none">
-              ql-Commerce
+              <Link href={"/"}>ql-Commerce</Link>
             </div>
             <nav className="flex items-center">
               <Link href={"/"} target="_blank" rel="noreferrer">
