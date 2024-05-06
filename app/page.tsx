@@ -6,6 +6,7 @@ import { getCollectionProducts, getCollections } from "@/lib/api";
 import Link from "next/link";
 import clsx from "clsx";
 import Price from "@/components/price";
+import { CarouselSize } from "./_components/cara";
 
 // export const metadata = {
 //   description: 'High-performance ecommerce store built with Next.js, Vercel, and Shopify.',
@@ -81,6 +82,7 @@ export default async function Home() {
           );
         })}
       </section>
+      <CarouselSize products={homepageItems} />
       {/* Thin banner */}
       <div className="w-[100vw] relative h-[10rem] -mx-[50vw] bg-muted">
         <Image
