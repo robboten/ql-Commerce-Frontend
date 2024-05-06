@@ -4,7 +4,7 @@ import {
   getCollectionsQuery,
 } from "./queries/collection";
 import { getPagesQuery } from "./queries/page";
-import { getProductsQuery } from "./queries/product";
+import { getProductQuery, getProductsQuery } from "./queries/product";
 import {
   PagesOperation,
   ApiProduct,
@@ -17,6 +17,7 @@ import {
   CollectionsOperation,
   ApiCollection,
   ProductsCollectionOperation,
+  ProductOperation,
 } from "./types";
 
 const domain = process.env.GRAPHQL_API_DOMAIN;
@@ -77,6 +78,17 @@ export async function getPages(): Promise<Page[]> {
     query: getPagesQuery,
   });
   return removeEdgesAndNodes(res.body.data.pages);
+}
+
+export async function getProduct(handle: string): Promise<Product | undefined> {
+  const res = await apiFetch<ProductOperation>({
+    query: getProductQuery,
+    tags: [TAGS.products],
+    variables: {
+      handle,
+    },
+  });
+  return reshapeProduct(res.body.data.product, false);
 }
 
 export async function getProducts({

@@ -80,7 +80,7 @@ export type ProductVariant = {
 };
 
 export type Money = {
-  amount: string;
+  amount: number;
   currencyCode: string;
 };
 
