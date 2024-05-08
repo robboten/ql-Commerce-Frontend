@@ -25,6 +25,25 @@ export type PagesOperation = {
   };
 };
 
+export type Menu = {
+  title: string;
+  path: string;
+};
+
+export type MenuOperation = {
+  data: {
+    menu?: {
+      items: {
+        title: string;
+        url: string;
+      }[];
+    };
+  };
+  variables: {
+    handle: string;
+  };
+};
+
 export type Image = {
   url: string;
   altText: string;

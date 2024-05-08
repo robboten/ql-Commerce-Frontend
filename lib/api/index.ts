@@ -1,8 +1,10 @@
 import { TAGS } from "../constants";
 import {
   getCollectionProductsQuery,
+  getCollectionQuery,
   getCollectionsQuery,
 } from "./queries/collection";
+import { getMenuQuery } from "./queries/menu";
 import { getPagesQuery } from "./queries/page";
 import { getProductQuery, getProductsQuery } from "./queries/product";
 import {
@@ -18,6 +20,9 @@ import {
   ApiCollection,
   ProductsCollectionOperation,
   ProductOperation,
+  MenuOperation,
+  Menu,
+  CollectionOperation,
 } from "./types";
 
 const domain = process.env.GRAPHQL_API_DOMAIN;
@@ -72,6 +77,25 @@ export async function apiFetch<T>({
 export const removeEdgesAndNodes = (array: Connection<any>) => {
   return array.edges.map((edge) => edge?.node);
 };
+
+export async function getMenu(handle: string): Promise<Menu[]> {
+  const res = await apiFetch<MenuOperation>({
+    query: getMenuQuery,
+    tags: [TAGS.collections],
+    variables: {
+      handle,
+    },
+  });
+
+  return (
+    res.body?.data?.menu?.items.map((item: { title: string; url: string }) => ({
+      title: item.title,
+      path: item.url
+        .replace("/collections", "/collection")
+        .replace("/pages", ""),
+    })) || []
+  );
+}
 
 export async function getPages(): Promise<Page[]> {
   const res = await apiFetch<PagesOperation>({
@@ -148,6 +172,20 @@ export async function getCollectionProducts({
   return reshapeProducts(
     removeEdgesAndNodes(res.body.data.collection.products)
   );
+}
+
+export async function getCollection(
+  handle: string
+): Promise<Collection | undefined> {
+  const res = await apiFetch<CollectionOperation>({
+    query: getCollectionQuery,
+    tags: [TAGS.collections],
+    variables: {
+      handle,
+    },
+  });
+
+  return reshapeCollection(res.body.data.collection);
 }
 
 export async function getCollections(): Promise<Collection[]> {
