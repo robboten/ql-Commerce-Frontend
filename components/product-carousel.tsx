@@ -14,8 +14,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Price from "@/components/price";
 
-export function CarouselSize({ products }: { products: Product[] }) {
-  const prod = [...products, ...products, ...products];
+export function ProductCarousel({ products }: { products: Product[] }) {
   return (
     <Carousel
       opts={{
@@ -25,11 +24,14 @@ export function CarouselSize({ products }: { products: Product[] }) {
       className="w-full"
     >
       <CarouselContent>
-        {prod.map((f, i) => {
+        {products.map((f, i) => {
           const body = f.description.split("\n");
 
           return (
-            <CarouselItem key={i} className="basis-1/2 lg:basis-1/4">
+            <CarouselItem
+              key={i}
+              className="basis-1/2 lg:basis-1/4 xl:basis-1/5"
+            >
               <div className="p-0">
                 <Link
                   href={`/product/${f.handle}`}
@@ -59,17 +61,6 @@ export function CarouselSize({ products }: { products: Product[] }) {
             </CarouselItem>
           );
         })}
-        {/* {Array.from({ length: 15 }).map((_, index) => (
-          <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-            <div className="p-1">
-              <Card>
-                <CardContent className="flex aspect-square items-center justify-center p-6">
-                  <span className="text-3xl font-semibold">{index + 1}</span>
-                </CardContent>
-              </Card>
-            </div>
-          </CarouselItem>
-        ))} */}
       </CarouselContent>
       <CarouselPrevious />
       <CarouselNext />

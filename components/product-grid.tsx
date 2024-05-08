@@ -1,12 +1,14 @@
 import Price from "@/components/price";
-import { getPages, getProducts } from "@/lib/api";
+import { getProducts } from "@/lib/api";
+import { Product } from "@/lib/api/types";
 import Image from "next/image";
 import Link from "next/link";
 
-export default async function TestComponent() {
-  const items = await getPages();
-  const products = await getProducts({ query: "" });
-  //  console.log(products);
+export default async function ProductGrid({
+  products,
+}: {
+  products: Product[];
+}) {
   return (
     <div className="grid grid-cols-auto-fit-100 auto-rows-auto grid-flow gap-x-3 gap-y-10 w-full">
       {products.map((f, i) => {
@@ -20,7 +22,7 @@ export default async function TestComponent() {
           >
             <div className="relative w-full aspect-square lg:aspect-[2/3] object-cover">
               <Image
-                src={`https://picsum.photos/seed/xyz${i}/800`}
+                src={f.featuredImage.url}
                 alt="alt"
                 fill
                 // width={300}
@@ -33,15 +35,7 @@ export default async function TestComponent() {
             <span className="font-semibold mb-2 text-xl">
               <Price amount={f.priceRange.minVariantPrice} className="inline" />
             </span>
-            {/* <time className="text-xl font-bold mb-3" dateTime={f.createdAt}>
-              {new Intl.DateTimeFormat().format(new Date(f.createdAt))}
-            </time> */}
             <p className="text-sm">{body[0]}</p>
-            {/* <div className="prose">
-              {body.map((p, i) => (
-                <p key={i}>{p}</p>
-              ))}
-            </div> */}
           </Link>
         );
       })}
