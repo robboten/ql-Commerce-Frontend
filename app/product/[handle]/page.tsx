@@ -1,3 +1,4 @@
+import { AddToCartButton } from "@/components/add-to-cart-button";
 import { OptionsSelector } from "@/components/options-selector";
 import Price from "@/components/price";
 import SelectedPrice from "@/components/selected-price";
@@ -33,7 +34,6 @@ export default async function ProductPage({
       {}
     ),
   }));
-  console.log(combinations);
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -84,7 +84,10 @@ export default async function ProductPage({
                 variants={product.variants}
                 options={product.options}
               />
-              <Button type="button">Add to cart</Button>
+              <AddToCartButton
+                variants={product.variants}
+                availableForSale={product.availableForSale}
+              />
             </div>
           </div>
           <p className="pb-6 prose max-w-full leading-snug">
