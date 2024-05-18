@@ -1,23 +1,9 @@
-import type { Metadata } from "next";
-import { Inter, Afacad, Sono } from "next/font/google";
-import "./globals.css";
-import { NavigationMenuDemo, TopNav } from "../components/top-nav";
-import { MobileNav } from "@/components/ui/mobile-nav";
-import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Icons } from "@/components/ui/icons";
-import Navbar from "@/components/navbar";
 import { Footer } from "@/components/footer";
-
-//const inter = Inter({ subsets: ["latin"] });
-//const afacad = Afacad({ subsets: ["latin"] });
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
-});
+import Navbar from "@/components/navbar";
+import { cn } from "@/lib/utils";
+import type { Metadata } from "next";
+import { Afacad, Roboto_Mono } from "next/font/google";
+import "./globals.css";
 
 const afacad = Afacad({
   subsets: ["latin"],
@@ -25,10 +11,10 @@ const afacad = Afacad({
   variable: "--font-afacad",
 });
 
-const sono = Sono({
+const roboto_mono = Roboto_Mono({
   subsets: ["latin"],
+  variable: "--font-roboto-mono",
   display: "swap",
-  variable: "--font-sono-mono",
 });
 
 export const metadata: Metadata = {
@@ -44,51 +30,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`
-        ${afacad.className}
-        min-h-screen`}
-
-        //        ${afacad.variable}
-        //${sono.variable}
+        className={cn(afacad.className, roboto_mono.variable, "min-h-screen")}
       >
         <header className="container flex items-center justify-start h-16">
-          {/* <NavigationMenuDemo /> */}
           <Navbar />
-          {/* <MobileNav /> */}
-          {/* <div className="flex flex-1 items-center justify-between space-x-2 sm:justify-end">
-            <div className="w-full flex-1 sm:w-auto sm:flex-none">
-              <Link href={"/"}>ql-Commerce</Link>
-            </div>
-            <nav className="flex items-center">
-              <Link href={"/"} target="_blank" rel="noreferrer">
-                <div
-                  className={cn(
-                    buttonVariants({
-                      variant: "ghost",
-                    }),
-                    "w-9 px-0"
-                  )}
-                >
-                  <Icons.gitHub className="h-4 w-4" />
-                  <span className="sr-only">GitHub</span>
-                </div>
-              </Link>
-              <Link href={"/"} target="_blank" rel="noreferrer">
-                <div
-                  className={cn(
-                    buttonVariants({
-                      variant: "ghost",
-                    }),
-                    "w-9 px-0"
-                  )}
-                >
-                  <Icons.twitter className="h-3 w-3 fill-current" />
-                  <span className="sr-only">Twitter</span>
-                </div>
-              </Link>
-              <ModeToggle /> 
-            </nav>
-          </div> */}
         </header>
         {children}
         <Footer />

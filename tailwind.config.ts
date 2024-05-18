@@ -21,8 +21,7 @@ const config = {
     },
     extend: {
       fontFamily: {
-        sans: ["var(--font-afacad)"],
-        mono: ["var(--font-sono-mono)"],
+        mono: ["var(--font-roboto-mono)", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
