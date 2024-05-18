@@ -1,22 +1,16 @@
-import Image from "next/image";
-import ProductGrid from "../components/product-grid";
-import { Skeleton } from "@/components/ui/skeleton";
-import { TopNav } from "../components/top-nav";
-import { getCollectionProducts, getCollections, getProducts } from "@/lib/api";
-import Link from "next/link";
-import clsx from "clsx";
-import Price from "@/components/price";
-import { ProductCarousel } from "../components/product-carousel";
 import { Banner } from "@/components/banner";
 import FeaturedItems from "@/components/featured-items";
-import { Footer } from "@/components/footer";
+import { getCollectionProducts, getProducts } from "@/lib/api";
+import { ProductCarousel } from "../components/product-carousel";
+import ProductGrid from "../components/product-grid";
 
-// export const metadata = {
-//   description: 'High-performance ecommerce store built with Next.js, Vercel, and Shopify.',
-//   openGraph: {
-//     type: 'website'
-//   }
-// };
+export const metadata = {
+  description:
+    "High-performance ecommerce store built with Next.js. Backend using GraphQl built with .net/Hot Chocolate",
+  openGraph: {
+    type: "website",
+  },
+};
 
 export default async function Home() {
   const homepageItems = await getCollectionProducts({
