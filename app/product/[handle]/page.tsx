@@ -1,12 +1,8 @@
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { OptionsSelector } from "@/components/options-selector";
-import Price from "@/components/price";
+import { ProductGallery } from "@/components/product-gallery";
 import SelectedPrice from "@/components/selected-price";
-import { Button } from "@/components/ui/button";
 import { getProduct } from "@/lib/api";
-import { cn, formatMoney, formatMoneyRange } from "@/lib/utils";
-import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 type Combination = {
@@ -61,18 +57,20 @@ export default async function ProductPage({
       <main className="container">
         <article className="space-y-6">
           <div className="flex flex-col md:flex-row gap-6 lg:gap-10">
-            <picture className="lg:basis-4/6">
-              <Image
-                src={product.featuredImage.url}
-                alt={product.featuredImage.altText}
-                width={product.featuredImage.width}
-                height={product.featuredImage.height}
-                className="w-full"
-              />
-            </picture>
-            <div className="gap-2 flex flex-col lg:basis-2/6">
+            {/* <Image
+              src={product.featuredImage.url}
+              alt={product.featuredImage.altText}
+              width={product.featuredImage.width}
+              height={product.featuredImage.height}
+              className="w-full lg:basis-4/6"
+            /> */}
+            <ProductGallery
+              className="lg:basis-7/12"
+              images={[product.featuredImage, ...product.images]}
+            />
+            {/* <Gallery images={[product.featuredImage, ...product.images]} /> */}
+            <div className="flex flex-col lg:basis-5/12">
               <h1 className="text-2xl">{product.title}</h1>
-
               <SelectedPrice
                 variants={product.variants}
                 priceRange={{
@@ -87,12 +85,18 @@ export default async function ProductPage({
               <AddToCartButton
                 variants={product.variants}
                 availableForSale={product.availableForSale}
+                className="py-6"
               />
+              <div className="pt-2">
+                <h3 className="font-bold leading-relaxed text-lg">
+                  Product description
+                </h3>
+                <p className="prose max-w-full leading-snug">
+                  {product.description}
+                </p>
+              </div>
             </div>
           </div>
-          <p className="pb-6 prose max-w-full leading-snug">
-            {product.description}
-          </p>
         </article>
       </main>
     </>
