@@ -1,11 +1,12 @@
 import { getMenu } from "@/lib/api";
-import { Suspense } from "react";
-import { MobileNav } from "../ui/mobile-nav";
-import Link from "next/link";
 import { Menu } from "@/lib/api/types";
-import { Icons } from "../ui/icons";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { Suspense } from "react";
+import Cart from "../cart";
 import { buttonVariants } from "../ui/button";
+import { Icons } from "../ui/icons";
+import { MobileNav } from "../ui/mobile-nav";
 
 const { SITE_NAME } = process.env;
 
@@ -50,12 +51,7 @@ export default async function Navbar() {
           <Suspense fallback={<SearchSkeleton />}>
             <Search />
           </Suspense>
-        </div>
-        <div className="flex justify-end md:w-1/3">
-          <Suspense fallback={<OpenCart />}>
-            <Cart />
-          </Suspense>
-        </div> */}
+        </div>*/}
       </div>
       <div className="flex flex-1 items-center justify-between space-x-2 sm:justify-end">
         <Link
@@ -92,6 +88,11 @@ export default async function Navbar() {
             <span className="sr-only">LinkedIn</span>
           </div>
         </Link>
+        <div className="flex justify-end md:w-1/3">
+          <Suspense fallback={<div>kj</div>}>
+            <Cart />
+          </Suspense>
+        </div>
         {/* <ModeToggle /> */}
       </div>
     </nav>

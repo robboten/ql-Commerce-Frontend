@@ -1,5 +1,12 @@
 import { TAGS } from "../constants";
 import {
+  addToCartMutation,
+  createCartMutation,
+  editCartItemsMutation,
+  removeFromCartMutation,
+} from "./mutations/cart";
+import { getCartQuery } from "./queries/cart";
+import {
   getCollectionProductsQuery,
   getCollectionQuery,
   getCollectionsQuery,
@@ -23,6 +30,8 @@ import {
   MenuOperation,
   Menu,
   CollectionOperation,
+  ApiCart,
+  Cart,
 } from "./types";
 
 const domain = process.env.GRAPHQL_API_DOMAIN;
@@ -36,7 +45,7 @@ type ExtractVariables<T> = T extends { variables: object }
   : never;
 
 export async function apiFetch<T>({
-  cache = "no-store",
+  cache = "no-store", //"no-store",
   headers,
   query,
   tags,
@@ -216,7 +225,7 @@ export async function getCollections(): Promise<Collection[]> {
   return collections;
 }
 
-//reshape
+//---------reshape
 const reshapeImages = (images: Connection<Image>, productTitle: string) => {
   const flattened = removeEdgesAndNodes(images);
 
@@ -292,4 +301,149 @@ const reshapeCollections = (collections: Collection[]) => {
   }
 
   return reshapedCollections;
+};
+
+const reshapeCart = (cart: ApiCart): Cart => {
+  if (!cart.cost?.totalTaxAmount) {
+    cart.cost.totalTaxAmount = {
+      amount: 0.0,
+      currencyCode: "SEK",
+    };
+  }
+
+  return {
+    ...cart,
+    lines: removeEdgesAndNodes(cart.lines),
+  };
+};
+
+//---------------------
+export async function getCart(cartId: string): Promise<Cart | undefined> {
+  const res = await apiFetch<CartOperation>({
+    query: getCartQuery,
+    variables: { cartId },
+    tags: [TAGS.cart],
+    cache: "no-store",
+  });
+
+  // Old carts becomes `null` when you checkout.
+  if (!res.body.data.cart) {
+    return undefined;
+  }
+
+  return reshapeCart(res.body.data.cart);
+}
+
+export async function createCart(): Promise<Cart> {
+  const res = await apiFetch<CreateCartOperation>({
+    query: createCartMutation,
+    cache: "no-store",
+  });
+
+  return reshapeCart(res.body.data.cartCreate);
+}
+
+export async function addToCart(
+  cartId: string,
+  lines: { id: number; quantity: number }[]
+): Promise<Cart> {
+  const res = await apiFetch<AddToCartOperation>({
+    query: addToCartMutation,
+    variables: {
+      cartId,
+      lines,
+    },
+    cache: "no-store",
+  });
+  return reshapeCart(res.body.data.addToCart);
+}
+
+export async function removeFromCart(
+  cartId: string,
+  lineIds: string[]
+): Promise<Cart> {
+  const res = await apiFetch<RemoveFromCartOperation>({
+    query: removeFromCartMutation,
+    variables: {
+      cartId,
+      lineIds,
+    },
+    cache: "no-store",
+  });
+
+  return reshapeCart(res.body.data.cartLinesRemove);
+}
+
+export async function updateCart(
+  cartId: string,
+  lines: { id: string; merchandiseId: string; quantity: number }[]
+): Promise<Cart> {
+  const res = await apiFetch<UpdateCartOperation>({
+    query: editCartItemsMutation,
+    variables: {
+      cartId,
+      lines,
+    },
+    cache: "no-store",
+  });
+  return reshapeCart(res.body.data.cartLinesUpdate);
+}
+export type CartOperation = {
+  data: {
+    cart: ApiCart;
+  };
+  variables: {
+    cartId: string;
+  };
+};
+
+export type CreateCartWithLinesOperation = {
+  data: { cartCreateWithItems: ApiCart };
+  variables: {
+    lines: {
+      id: number;
+      quantity: number;
+    }[];
+  };
+};
+
+export type CreateCartOperation = {
+  data: { cartCreate: ApiCart };
+};
+
+export type AddToCartOperation = {
+  data: {
+    addToCart: ApiCart;
+  };
+  variables: {
+    cartId: string;
+    lines: {
+      id: number;
+      quantity: number;
+    }[];
+  };
+};
+
+export type RemoveFromCartOperation = {
+  data: {
+    cartLinesRemove: ApiCart;
+  };
+  variables: {
+    cartId: string;
+    lineIds: string[];
+  };
+};
+
+export type UpdateCartOperation = {
+  data: {
+    cartLinesUpdate: ApiCart;
+  };
+  variables: {
+    cartId: string;
+    lines: {
+      id: string;
+      merchandiseId: string;
+      quantity: number;
+    }[];
+  };
 };

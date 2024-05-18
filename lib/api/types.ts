@@ -166,3 +166,95 @@ export type CollectionsOperation = {
     collections: Connection<Collection>;
   };
 };
+
+export type Cart = Omit<ApiCart, "lines"> & {
+  lines: CartItem[];
+};
+
+export type CartItem = {
+  id: string;
+  quantity: number;
+  cost: {
+    totalAmount: Money;
+  };
+  merchandise: {
+    id: string;
+    title: string;
+    selectedOptions: {
+      name: string;
+      value: string;
+    }[];
+    product: Product;
+  };
+};
+export type ApiCart = {
+  id: string;
+  checkoutUrl: string;
+  cost: {
+    subtotalAmount: Money;
+    totalAmount: Money;
+    totalTaxAmount: Money;
+  };
+  lines: Connection<CartItem>;
+  totalQuantity: number;
+};
+
+export type CartOperation = {
+  data: {
+    cart: ApiCart;
+  };
+  variables: {
+    cartId: string;
+  };
+};
+
+export type CreateCartWithLinesOperation = {
+  data: { cartCreateWithItems: ApiCart };
+  variables: {
+    lines: {
+      id: number;
+      quantity: number;
+    }[];
+  };
+};
+
+export type CreateCartOperation = {
+  data: { cartCreate: ApiCart };
+};
+
+export type ShopifyAddToCartOperation = {
+  data: {
+    addToCart: ApiCart;
+  };
+  variables: {
+    cartId: string;
+    lines: {
+      id: number;
+      quantity: number;
+    }[];
+  };
+};
+
+export type RemoveFromCartOperation = {
+  data: {
+    cartLinesRemove: ApiCart;
+  };
+  variables: {
+    cartId: string;
+    lineIds: string[];
+  };
+};
+
+export type UpdateCartOperation = {
+  data: {
+    cartLinesUpdate: ApiCart;
+  };
+  variables: {
+    cartId: string;
+    lines: {
+      id: string;
+      merchandiseId: string;
+      quantity: number;
+    }[];
+  };
+};
