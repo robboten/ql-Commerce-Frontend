@@ -1,4 +1,4 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+This is a [Next.js](https://nextjs.org/) e-commerce project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app). Based upon Vercel's Commerce examples (https://github.com/vercel/commerce) but with modifications to make it use a custom GraphQl backend running on a .net application. Also added carousels from Shadcn and a custom UI with color swatches for variations selection.
 
 ## Getting Started
 
