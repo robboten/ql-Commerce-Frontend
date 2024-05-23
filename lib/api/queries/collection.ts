@@ -26,14 +26,32 @@ export const getCollectionsQuery = /* GraphQL */ `
 export const getCollectionProductsQuery = /* GraphQL */ `
   query getCollectionProducts(
     $handle: String!
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
     $order_by: [ProductSortInput!]
   ) {
     collection(handle: $handle) {
-      products(order: $order_by, first: 50) {
+      products(
+        order: $order_by
+        first: $first
+        after: $after
+        last: $last
+        before: $before
+      ) {
         edges {
           node {
             ...product
           }
+          cursor
+        }
+        totalCount
+        pageInfo {
+          hasNextPage
+          hasPreviousPage
+          startCursor
+          endCursor
         }
       }
     }

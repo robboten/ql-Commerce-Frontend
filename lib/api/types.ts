@@ -2,10 +2,13 @@ export type Maybe<T> = T | null;
 
 export type Connection<T> = {
   edges: Array<Edge<T>>;
+  totalCount: number;
+  pageInfo?: PageInfo;
 };
 
 export type Edge<T> = {
   node: T;
+  cursor?: string;
 };
 
 export type Page = {
@@ -95,7 +98,7 @@ export type ProductVariant = {
     name: string;
     value: string;
   }[];
-  price: Money;
+  price: number;
 };
 
 export type Money = {
@@ -123,6 +126,17 @@ export type ProductsOperation = {
   };
 };
 
+export interface ProductWithPaginationInfo {
+  products: Product[];
+  count: number;
+  pageInfo?: PageInfo;
+}
+export interface PageInfo {
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  endCursor: string;
+  startCursor: string;
+}
 export type ProductsCollectionOperation = {
   data: {
     collection: {
@@ -130,9 +144,13 @@ export type ProductsCollectionOperation = {
     };
   };
   variables: {
+    after?: string;
+    before?: string;
     handle: string;
     reverse?: boolean;
     sortKey?: string;
+    last?: number;
+    first?: number;
     order_by?: Array<
       Record<string, string> | Record<string, Record<string, string>>
     >;
@@ -175,7 +193,7 @@ export type CartItem = {
   id: string;
   quantity: number;
   cost: {
-    totalAmount: Money;
+    totalAmount: number;
   };
   merchandise: {
     id: string;
@@ -191,9 +209,9 @@ export type ApiCart = {
   id: string;
   checkoutUrl: string;
   cost: {
-    subtotalAmount: Money;
-    totalAmount: Money;
-    totalTaxAmount: Money;
+    subtotalAmount: number;
+    totalAmount: number;
+    totalTaxAmount: number;
   };
   lines: Connection<CartItem>;
   totalQuantity: number;
