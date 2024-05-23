@@ -32,6 +32,8 @@ import {
   CollectionOperation,
   ApiCart,
   Cart,
+  PageInfo,
+  ProductWithPaginationInfo,
 } from "./types";
 
 const domain = process.env.GRAPHQL_API_DOMAIN;
@@ -84,7 +86,16 @@ export async function apiFetch<T>({
 }
 
 export const removeEdgesAndNodes = (array: Connection<any>) => {
-  return array.edges.map((edge) => edge?.node);
+  return array.edges.map((edge) => {
+    return edge?.node;
+  });
+};
+
+export const removeEdges = <T>(array: Connection<T>) => {
+  return array.edges.map((edge) => ({
+    node: edge?.node,
+    cursor: edge?.cursor,
+  }));
 };
 
 export async function getMenu(handle: string): Promise<Menu[]> {
@@ -155,32 +166,57 @@ export async function getCollectionProducts({
   collection,
   reverse,
   sortKey,
+  after,
+  before,
+  page,
 }: {
   collection: string;
   reverse?: boolean;
   sortKey?: string;
-}): Promise<Product[]> {
+  after?: string;
+  before?: string;
+  page?: string;
+}): Promise<ProductWithPaginationInfo> {
   const queryOrder = [
     sortKey === "price"
       ? { ["priceRange"]: { ["minVariantPrice"]: reverse ? "DESC" : "ASC" } }
       : { [sortKey ? sortKey : "title"]: reverse ? "DESC" : "ASC" },
   ];
+  const variables = after
+    ? {
+        handle: collection,
+        order_by: queryOrder,
+        first: 10,
+        after,
+      }
+    : before
+    ? {
+        handle: collection,
+        order_by: queryOrder,
+        last: 10,
+        before,
+      }
+    : {
+        handle: collection,
+        order_by: queryOrder,
+      };
   const res = await apiFetch<ProductsCollectionOperation>({
     query: getCollectionProductsQuery,
     tags: [TAGS.collections, TAGS.products],
-    variables: {
-      handle: collection,
-      order_by: queryOrder,
-    },
+    variables: variables,
   });
   if (!res.body.data.collection) {
     console.log(`No collection found for \`${collection}\``);
-    return [];
+    return { count: 0, products: [] };
   }
 
-  return reshapeProducts(
-    removeEdgesAndNodes(res.body.data.collection.products)
-  );
+  return {
+    count: res.body.data.collection.products.totalCount,
+    products: reshapeProductsFromEdges(
+      removeEdges<ApiProduct>(res.body.data.collection.products)
+    ),
+    pageInfo: res.body.data.collection.products.pageInfo,
+  };
 }
 
 export async function getCollection(
@@ -274,6 +310,26 @@ const reshapeProducts = (products: ApiProduct[]) => {
   return reshapedProducts;
 };
 
+interface ProductsWithCursor {
+  node: ApiProduct;
+  cursor?: string | undefined;
+}
+const reshapeProductsFromEdges = (data: ProductsWithCursor[]) => {
+  const reshapedProducts = [];
+
+  for (const { node } of data) {
+    if (node) {
+      const reshapedProduct = reshapeProduct(node);
+
+      if (reshapedProduct) {
+        reshapedProducts.push(reshapedProduct);
+      }
+    }
+  }
+
+  return reshapedProducts;
+};
+
 const reshapeCollection = (
   collection: ApiCollection
 ): Collection | undefined => {
@@ -305,10 +361,7 @@ const reshapeCollections = (collections: Collection[]) => {
 
 const reshapeCart = (cart: ApiCart): Cart => {
   if (!cart.cost?.totalTaxAmount) {
-    cart.cost.totalTaxAmount = {
-      amount: 0.0,
-      currencyCode: "SEK",
-    };
+    cart.cost.totalTaxAmount = 0;
   }
 
   return {
