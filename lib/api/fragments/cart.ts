@@ -5,18 +5,9 @@ const cartFragment = /* GraphQL */ `
     id
     checkoutUrl
     cost {
-      subtotalAmount {
-        amount
-        currencyCode
-      }
-      totalAmount {
-        amount
-        currencyCode
-      }
-      totalTaxAmount {
-        amount
-        currencyCode
-      }
+      subtotalAmount
+      totalAmount
+      totalTaxAmount
     }
     lines(first: 50) {
       edges {
@@ -24,10 +15,7 @@ const cartFragment = /* GraphQL */ `
           id
           quantity
           cost {
-            totalAmount {
-              amount
-              currencyCode
-            }
+            totalAmount
           }
           merchandise {
             ... on ProductVariant {

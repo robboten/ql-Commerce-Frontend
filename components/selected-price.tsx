@@ -21,8 +21,8 @@ export default function SelectedPrice({
 
   return (
     <div className="text-2xl font-extrabold">
-      {variant?.price.amount ? (
-        <Price amount={variant.price.amount.toString()} currencyCode="SEK" />
+      {variant?.price ? (
+        <Price amount={variant.price} currencyCode="SEK" />
       ) : (
         <>
           {priceRange.minVariantPrice === priceRange.maxVariantPrice ? (

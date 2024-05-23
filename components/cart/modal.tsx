@@ -84,7 +84,7 @@ export default function CartModal({ cart }: { cart: Cart | undefined }) {
                         <div className="flex flex-col text-right justify-between">
                           <Price
                             className="text-xl font-normal"
-                            amount={listItem.cost.totalAmount.amount}
+                            amount={listItem.cost.totalAmount}
                           />
                           <div className="border h-9 space-x-4 rounded-full p-2 flex items-center justify-between">
                             <QuantityButton item={listItem} type="minus" />
@@ -103,7 +103,7 @@ export default function CartModal({ cart }: { cart: Cart | undefined }) {
                     <p>Taxes</p>
                     <Price
                       className="text-right"
-                      amount={cart.cost.totalTaxAmount.amount}
+                      amount={cart.cost.totalTaxAmount}
                     />
                   </div>
                   <div className="flex items-center justify-between border-b py-4">
@@ -114,7 +114,7 @@ export default function CartModal({ cart }: { cart: Cart | undefined }) {
                     <p>Total</p>
                     <Price
                       className="text-right"
-                      amount={cart.cost.totalAmount.amount + 49}
+                      amount={cart.cost.totalAmount + 49}
                     />
                   </div>
                 </div>

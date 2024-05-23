@@ -30,10 +30,7 @@ const productFragment = /* GraphQL */ `
             name
             value
           }
-          price {
-            amount
-            currencyCode
-          }
+          price
         }
       }
     }
