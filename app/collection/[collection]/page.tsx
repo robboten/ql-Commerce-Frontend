@@ -1,3 +1,6 @@
+import { CursorPagination } from "@/components/data-table/cursor-pagination";
+import { InfiniteScroll } from "@/components/data-table/inf-scroll";
+import { DataTablePagination } from "@/components/data-table/pagination";
 import { FullWidthField } from "@/components/full-w-field";
 import ProductGrid from "@/components/product-grid";
 import { getCollection, getCollectionProducts } from "@/lib/api";
@@ -31,10 +34,13 @@ export default async function CategoryPage({
   params: { collection: string };
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
-  const { sort } = searchParams as { [key: string]: string };
+  const { sort, after, before } = searchParams as { [key: string]: string };
+
   //const { sortKey, reverse } = sorting.find((item) => item.slug === sort) || defaultSort;
-  const products = await getCollectionProducts({
+  const { products, count, pageInfo } = await getCollectionProducts({
     collection: params.collection,
+    after,
+    before,
     //sortKey: sortKey,
     // reverse
   });
@@ -51,10 +57,15 @@ export default async function CategoryPage({
           {collection?.description}
         </p>
       </FullWidthField>
-      {products.length === 0 ? (
+      {count === 0 ? (
         <p className="py-3 text-lg">{`No products found in this collection`}</p>
       ) : (
-        <ProductGrid products={products} />
+        <InfiniteScroll
+          initialItems={products}
+          collection={params.collection}
+          pageInfo={pageInfo}
+        />
+        // <ProductGrid products={products} />
       )}
     </section>
   );

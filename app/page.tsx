@@ -4,6 +4,19 @@ import { getCollectionProducts, getProducts } from "@/lib/api";
 import { ProductCarousel } from "../components/product-carousel";
 import ProductGrid from "../components/product-grid";
 
+/**
+ * TODO:
+ * Footer
+ * Search
+ * Collection All
+ * Sorting
+ * Pagination
+ * AI data
+ * Checkout
+ * Tax/Shipping rates
+ * Dark mode
+ **/
+
 export const metadata = {
   description:
     "High-performance ecommerce store built with Next.js. Backend using GraphQl built with .net/Hot Chocolate",
@@ -28,7 +41,7 @@ export default async function Home() {
         </div>
       </Banner>
       <FeaturedItems />
-      <ProductCarousel products={homepageItems} />
+      <ProductCarousel products={homepageItems.products} />
       <Banner
         imgSrc="https://picsum.photos/seed/65y/600/200"
         className="h-[10rem]"
