@@ -1,14 +1,9 @@
 import Price from "@/components/price";
-import { getProducts } from "@/lib/api";
 import { Product } from "@/lib/api/types";
 import Image from "next/image";
 import Link from "next/link";
 
-export default async function ProductGridCard({
-  product,
-}: {
-  product: Product;
-}) {
+export default function ProductGridCard({ product }: { product: Product }) {
   const body = product.description.split("\n");
   return (
     <Link
