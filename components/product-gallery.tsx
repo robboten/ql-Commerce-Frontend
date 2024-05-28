@@ -25,12 +25,15 @@ export function ProductGallery({
   const mainImage = useMemo(
     () =>
       images.map((image, index) => (
-        <CarouselItem key={index} className="relative h-96">
+        <CarouselItem
+          key={index}
+          className="relative max-h-[480] min-h-[80px] aspect-[4/3]"
+        >
           <Image
             src={image.url}
             alt={image.altText}
             fill
-            className="object-cover"
+            className="object-cover "
           />
         </CarouselItem>
       )),
