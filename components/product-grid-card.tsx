@@ -2,7 +2,7 @@ import Price from "@/components/price";
 import { Product } from "@/lib/api/types";
 import Image from "next/image";
 import Link from "next/link";
-
+import landscape from "../public/images/placeholders/4-3a.png";
 export default function ProductGridCard({ product }: { product: Product }) {
   const body = product.description.split("\n");
   return (
@@ -12,7 +12,7 @@ export default function ProductGridCard({ product }: { product: Product }) {
     >
       <div className="relative w-full aspect-square lg:aspect-[2/3] object-cover">
         <Image
-          src={product.featuredImage.url}
+          src={landscape}
           alt="alt"
           fill
           // width={300}

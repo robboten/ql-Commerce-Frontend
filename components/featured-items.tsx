@@ -3,6 +3,7 @@ import Price from "./price";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { getCollectionProducts } from "@/lib/api";
+import landscape from "../public/images/placeholders/4-3a.png";
 export default async function FeaturedItems() {
   const homepageItems = await getCollectionProducts({
     collection: "hidden-homepage-featured-items",
@@ -28,7 +29,7 @@ export default async function FeaturedItems() {
               href={`/product/${product.handle}`}
             >
               <Image
-                src={product.featuredImage.url} //"https://picsum.photos/seed/3/400"
+                src={landscape} //"https://picsum.photos/seed/3/400"
                 alt={product.featuredImage.altText}
                 fill
                 sizes={

@@ -10,6 +10,8 @@ import { Image as ImageType } from "@/lib/api/types";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import square from "../public/images/placeholders/1-1a.png";
+import landscape from "../public/images/placeholders/4-3a.png";
 
 export function ProductGallery({
   images,
@@ -30,7 +32,7 @@ export function ProductGallery({
           className="relative max-h-[480] min-h-[80px] aspect-[4/3]"
         >
           <Image
-            src={image.url}
+            src={landscape}
             alt={image.altText}
             fill
             className="object-cover "
@@ -52,7 +54,7 @@ export function ProductGallery({
               "box-border  border-transparent object-cover fit",
               index === current ? "border-2" : ""
             )}
-            src={image.url}
+            src={square}
             fill
             alt={image.altText}
           />

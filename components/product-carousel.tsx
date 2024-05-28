@@ -13,7 +13,7 @@ import { Product } from "@/lib/api/types";
 import Link from "next/link";
 import Image from "next/image";
 import Price from "@/components/price";
-
+import landscape from "../public/images/placeholders/4-3a.png";
 export function ProductCarousel({ products }: { products: Product[] }) {
   return (
     <Carousel
@@ -39,7 +39,7 @@ export function ProductCarousel({ products }: { products: Product[] }) {
                 >
                   <div className="relative w-full aspect-square lg:aspect-[2/3] object-cover">
                     <Image
-                      src={`https://picsum.photos/seed/xyz${i}/800`}
+                      src={landscape}
                       alt="alt"
                       fill
                       // width={300}
