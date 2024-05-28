@@ -182,24 +182,15 @@ export async function getCollectionProducts({
       ? { ["priceRange"]: { ["minVariantPrice"]: reverse ? "DESC" : "ASC" } }
       : { [sortKey ? sortKey : "title"]: reverse ? "DESC" : "ASC" },
   ];
-  const variables = after
-    ? {
-        handle: collection,
-        order_by: queryOrder,
-        first: 10,
-        after,
-      }
-    : before
-    ? {
-        handle: collection,
-        order_by: queryOrder,
-        last: 10,
-        before,
-      }
-    : {
-        handle: collection,
-        order_by: queryOrder,
-      };
+
+  const variables = {
+    handle: collection,
+    order_by: queryOrder,
+    first: 10,
+    after,
+  };
+
+  console.log("vars", variables);
   const res = await apiFetch<ProductsCollectionOperation>({
     query: getCollectionProductsQuery,
     tags: [TAGS.collections, TAGS.products],
@@ -314,7 +305,7 @@ interface ProductsWithCursor {
   node: ApiProduct;
   cursor?: string | undefined;
 }
-const reshapeProductsFromEdges = (data: ProductsWithCursor[]) => {
+export const reshapeProductsFromEdges = (data: ProductsWithCursor[]) => {
   const reshapedProducts = [];
 
   for (const { node } of data) {

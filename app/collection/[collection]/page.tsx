@@ -1,13 +1,8 @@
-import { CursorPagination } from "@/components/data-table/cursor-pagination";
 import { InfiniteScroll } from "@/components/data-table/inf-scroll";
-import { DataTablePagination } from "@/components/data-table/pagination";
 import { FullWidthField } from "@/components/full-w-field";
-import ProductGrid from "@/components/product-grid";
 import { getCollection, getCollectionProducts } from "@/lib/api";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-
-export const runtime = "edge";
 
 export async function generateMetadata({
   params,
@@ -39,8 +34,6 @@ export default async function CategoryPage({
   //const { sortKey, reverse } = sorting.find((item) => item.slug === sort) || defaultSort;
   const { products, count, pageInfo } = await getCollectionProducts({
     collection: params.collection,
-    after,
-    before,
     //sortKey: sortKey,
     // reverse
   });

@@ -7,7 +7,7 @@ export default async function FeaturedItems() {
   const homepageItems = await getCollectionProducts({
     collection: "hidden-homepage-featured-items",
   });
-  const limitedItems = homepageItems.slice(0, 4);
+  const limitedItems = homepageItems.products.slice(0, 4);
 
   return (
     <section className="mx-auto grid w-full grid-cols-1 md:grid-cols-3 lg:grid-cols-4 lg:grid-rows-2 gap-4">

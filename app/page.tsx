@@ -15,6 +15,7 @@ import ProductGrid from "../components/product-grid";
  * Checkout
  * Tax/Shipping rates
  * Dark mode
+ * Category heroes
  **/
 
 export const metadata = {

@@ -1,18 +1,12 @@
 "use client";
-import { Loader2 } from "lucide-react";
+import { ArrowBigUp, Loader2 } from "lucide-react";
 import { useInView } from "react-intersection-observer";
-import { getItems } from "./actions";
 import { PageInfo, Product } from "@/lib/api/types";
 import { useEffect, useState } from "react";
 import ProductGridCard from "../product-grid-card";
-
-export function ScrollLoader() {
-  return (
-    <div>
-      <Loader2 className="h-16 w-16 animate-spin" />
-    </div>
-  );
-}
+import { getCollectionProducts } from "@/lib/api";
+import { getColl } from "@/app/collection/[collection]/actions";
+import ScrollToTop from "./to-top";
 
 export function InfiniteScroll({
   initialItems,
@@ -23,22 +17,31 @@ export function InfiniteScroll({
   collection: string;
   pageInfo?: PageInfo;
 }) {
-  const { ref, inView, entry } = useInView({
-    threshold: 1,
+  const { ref, inView } = useInView({
+    threshold: 0,
     triggerOnce: false,
   });
+
+  const [ref2, inView2] = useInView({ threshold: 0.1 });
 
   const [hasMoreItems, setHasMoreItems] = useState(pageInfo?.hasNextPage);
   const [currentCursor, setCurrentCursor] = useState(pageInfo?.endCursor);
   const [items, setItems] = useState(initialItems);
+  const [showScroll, setShowScroll] = useState(false);
 
   const loadMoreItems = async () => {
     if (hasMoreItems) {
-      const items = await getItems(collection, currentCursor);
-      setItems((prevItems) => [...prevItems, ...items.products]);
-      setHasMoreItems(items.pageInfo?.hasNextPage);
-      setCurrentCursor(items.pageInfo?.endCursor);
-      console.log(items);
+      try {
+        const { products, pageInfo } = await getColl(
+          collection,
+          currentCursor!
+        );
+        setItems((prevItems) => [...prevItems, ...products]);
+        setHasMoreItems(pageInfo?.hasNextPage);
+        setCurrentCursor(pageInfo?.endCursor);
+      } catch {
+        console.error("nope");
+      }
     }
   };
 
@@ -48,20 +51,33 @@ export function InfiniteScroll({
     }
   }, [inView, hasMoreItems]);
 
+  useEffect(() => {
+    if (inView2) {
+      setShowScroll(true);
+    } else {
+      setShowScroll(false);
+    }
+  }, [inView2]);
+
   return (
-    <div className="grid grid-cols-auto-fit-100 auto-rows-auto grid-flow gap-x-3 gap-y-10 w-full">
-      {items.map((product) => {
-        return <ProductGridCard key={product.id} product={product} />;
-      })}
+    <>
+      <ScrollToTop />
+      <div
+        ref={ref2}
+        className="grid grid-cols-auto-fit-100 auto-rows-auto grid-flow gap-x-3 gap-y-10 w-full"
+      >
+        {items.map((product) => {
+          return <ProductGridCard key={product.id} product={product} />;
+        })}
+      </div>
       {hasMoreItems && (
         <div
           ref={ref}
-          className="w-full flex justify-center flex-col items-center"
+          className="w-full text-zinc-400 flex justify-center flex-col items-center py-4"
         >
-          <h2>{`Header inside viewport ${inView}.`}</h2>
-          <ScrollLoader />
+          <Loader2 aria-label="Loading" className="h-16 w-16 animate-spin" />
         </div>
       )}
-    </div>
+    </>
   );
 }
